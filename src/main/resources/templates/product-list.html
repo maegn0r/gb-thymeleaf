@@ -36,6 +36,9 @@
                     <a type="button" class="btn btn-warning" th:href="@{/product(id=${product.id})}">Редактировать</a>
                 </td>
                 <td>
+                    <a type="button" class="btn btn-warning" th:href="@{/cart/addToCart(productId=${product.id})}">В корзину</a>
+                </td>
+                <td>
 <!--                    th:href="@{/product/delete/' + ${product.id}}"-->
                     <a type="button" class="btn btn-danger" th:href="@{/product/delete(id=${product.id})}">Удалить</a>
                 </td>
