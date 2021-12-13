@@ -17,4 +17,7 @@ public class CartProductService {
     public CartProduct save(CartProduct cartProduct) {
         return cartProductDao.save(cartProduct);
     }
+    public void delete(CartProduct cartProduct) {
+        cartProductDao.customDelete(cartProduct.getId());
+    }
 }

@@ -29,7 +29,7 @@ public class CartProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
@@ -41,5 +41,7 @@ public class CartProduct {
                 .cart(c)
                 .build();
     }
+
+
 
 }
