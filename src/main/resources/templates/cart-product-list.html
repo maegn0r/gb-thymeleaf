@@ -14,12 +14,11 @@
 <div th:replace="~{navbar :: navi(Cart)}"></div>
 
 <div class="container">
-    <span th:if="${cart.getCartProducts().size() == 0}">Товаров нет</span>
-    <div th:unless="${cart.getCartProducts().size() == 0}">
+    <span th:if="${cartProducts.size() == 0}">Товаров нет</span>
+    <div th:unless="${cartProducts.size() == 0}">
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">#</th>
                 <th scope="col">Название</th>
                 <th scope="col">Цена</th>
                 <th scope="col">Количество</th>
@@ -29,16 +28,14 @@
             </thead>
             <tbody>
             <tr
-            th:each="cartProduct: ${cart.getCartProducts()}" th:attr="prod_index=${cartProduct.id}">
-                <th scope="row">1</th>
+            th:each="cartProduct: ${cartProducts}" th:attr="prod_index=${cartProduct.id}">
                 <td th:text="${cartProduct.product.title}"></td>
                 <td th:text="${cartProduct.cost}"></td>
                 <td th:text="${cartProduct.count}"></td>
-<!--                <td>-->
-<!--                    <a type="button" class="btn btn-warning" th:href="@{/product(id=${product.id})}">Редактировать</a>-->
-<!--                </td>-->
                 <td>
-<!--                    th:href="@{/product/delete/' + ${product.id}}"-->
+                    <a type="button" class="btn btn-warning" th:href="@{/cart/increase(id=${cartProduct.id})}">+</a>
+                </td>
+                <td>
                     <a type="button" class="btn btn-danger" th:href="@{/cart/delete(id=${cartProduct.id})}">-</a>
                 </td>
             </tr>

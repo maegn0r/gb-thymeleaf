@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.gb.gbthymeleaf.entity.Cart;
@@ -16,6 +15,8 @@ import ru.gb.gbthymeleaf.service.CartService;
 import ru.gb.gbthymeleaf.service.ProductService;
 
 import javax.annotation.PostConstruct;
+import java.util.Comparator;
+import java.util.List;
 
 
 @Controller
@@ -35,18 +36,15 @@ public class CartController {
 
     @GetMapping
     public String getCartProductList(Model model) {
-//        if (cart == null) {
-//            cart = cartService.save(cartService.createEmptyCart());
-//        }
-        model.addAttribute("cart", cartService.findById(cart.getId()));
+        cart = cartService.findById(cart.getId());
+        List<CartProduct> cartProductList = cart.getCartProducts();
+        cartProductList.sort(Comparator.comparing(CartProduct::getId));
+        model.addAttribute("cartProducts", cartProductList);
         return "cart-product-list";
     }
 
     @GetMapping("/addToCart")
     public String addProductToCart(@RequestParam(name = "productId") Long productId) {
-//        if (cart == null) {
-//            cart = cartService.save(cartService.createEmptyCart());
-//        }
         Product product = productService.findById(productId);
 
         CartProduct cartProduct = cart.getCartProducts()
@@ -73,14 +71,22 @@ public class CartController {
                 .findFirst().get();
 
             if (cartProduct.getCount() == 1) {
-//                cart.getCartProducts().remove(cartProduct);
-//                cart = cartService.save(cart);
                 cartProductService.delete(cartProduct);
             } else {
                 cartProduct.setCount(cartProduct.getCount() - 1L);
                 cart = cartService.save(cart);
             }
 
+        return "redirect:/cart";
+    }
+    @GetMapping("/increase")
+    public String increaseProductsCountInCart(@RequestParam(name = "id") Long id) {
+        cart.getCartProducts()
+                .stream()
+                .filter(item -> item.getId()
+                        .equals(id))
+                .findFirst().ifPresent(item -> item.setCount(item.getCount()+1L));
+        cart = cartService.save(cart);
         return "redirect:/cart";
     }
 }
