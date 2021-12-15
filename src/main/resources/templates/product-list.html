@@ -22,6 +22,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Название</th>
                 <th scope="col">Цена</th>
+                <th scope="col">Доступно</th>
                 <th scope="col">Редактировать</th>
                 <th scope="col">Удалить</th>
             </tr>
@@ -32,14 +33,14 @@
                 <th scope="row">1</th>
                 <td th:text="${product.title}"></td>
                 <td th:text="${product.cost}"></td>
+                <td th:text="${product.count}"></td>
                 <td>
                     <a type="button" class="btn btn-warning" th:href="@{/product(id=${product.id})}">Редактировать</a>
                 </td>
                 <td>
-                    <a type="button" class="btn btn-warning" th:href="@{/cart/addToCart(productId=${product.id})}">В корзину</a>
+                    <a type="button" class="btn btn-warning" th:if="${product.status.name() == 'ACTIVE'}" th:href="@{/cart/addToCart(productId=${product.id})}">В корзину</a>
                 </td>
                 <td>
-<!--                    th:href="@{/product/delete/' + ${product.id}}"-->
                     <a type="button" class="btn btn-danger" th:href="@{/product/delete(id=${product.id})}">Удалить</a>
                 </td>
             </tr>

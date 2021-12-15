@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.gb.gbthymeleaf.entity.Cart;
 import ru.gb.gbthymeleaf.entity.CartProduct;
 import ru.gb.gbthymeleaf.entity.Product;
+import ru.gb.gbthymeleaf.entity.enums.Status;
 import ru.gb.gbthymeleaf.service.CartProductService;
+import ru.gb.gbthymeleaf.service.CartProductServiceFacade;
 import ru.gb.gbthymeleaf.service.CartService;
 import ru.gb.gbthymeleaf.service.ProductService;
 
@@ -24,19 +26,17 @@ import java.util.List;
 @RequestMapping("/cart")
 public class CartController {
 
-    private final CartService cartService;
     private Cart cart;
-    private final ProductService productService;
-    private final CartProductService cartProductService;
+    private final CartProductServiceFacade service;
 
     @PostConstruct
     private void init() {
-        cart = cartService.findById(2L);
+        cart = service.findCartById(7L);
     }
 
     @GetMapping
     public String getCartProductList(Model model) {
-        cart = cartService.findById(cart.getId());
+        cart = service.findCartById(cart.getId());
         List<CartProduct> cartProductList = cart.getCartProducts();
         cartProductList.sort(Comparator.comparing(CartProduct::getId));
         model.addAttribute("cartProducts", cartProductList);
@@ -45,7 +45,7 @@ public class CartController {
 
     @GetMapping("/addToCart")
     public String addProductToCart(@RequestParam(name = "productId") Long productId) {
-        Product product = productService.findById(productId);
+        Product product = service.findProductById(productId);
 
         CartProduct cartProduct = cart.getCartProducts()
                 .stream()
@@ -57,7 +57,7 @@ public class CartController {
             cart.getCartProducts().add(CartProduct.create(product, cart));
         } else cartProduct.setCount(cartProduct.getCount() + 1L);
 
-        cart = cartService.save(cart);
+        cart = service.saveAndUpdate(cart, product);
         return "redirect:/product/all";
     }
 
@@ -70,23 +70,17 @@ public class CartController {
                         .equals(id))
                 .findFirst().get();
 
-            if (cartProduct.getCount() == 1) {
-                cartProductService.delete(cartProduct);
-            } else {
-                cartProduct.setCount(cartProduct.getCount() - 1L);
-                cart = cartService.save(cart);
-            }
-
+        service.decreaseCartProduct(cartProduct);
         return "redirect:/cart";
     }
     @GetMapping("/increase")
     public String increaseProductsCountInCart(@RequestParam(name = "id") Long id) {
-        cart.getCartProducts()
+        CartProduct cartProduct = cart.getCartProducts()
                 .stream()
                 .filter(item -> item.getId()
                         .equals(id))
-                .findFirst().ifPresent(item -> item.setCount(item.getCount()+1L));
-        cart = cartService.save(cart);
+                .findFirst().get();
+        service.increaseCartProduct(cartProduct);
         return "redirect:/cart";
     }
 }
