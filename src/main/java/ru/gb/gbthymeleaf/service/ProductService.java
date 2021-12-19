@@ -10,11 +10,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.gb.gbthymeleaf.dao.ProductDao;
+import ru.gb.gbthymeleaf.dto.ProductDto;
 import ru.gb.gbthymeleaf.entity.Product;
 import ru.gb.gbthymeleaf.entity.enums.Status;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +45,8 @@ public class ProductService {
         return productDao.findById(id).orElse(null);
     }
 
-    public List<Product> findAll() {
-        return productDao.findAll();
+    public List<ProductDto> findAll() {
+        return productDao.findAll().stream().map(ProductDto::new).collect(Collectors.toList());
     }
 
     public void deleteById(Long id) {

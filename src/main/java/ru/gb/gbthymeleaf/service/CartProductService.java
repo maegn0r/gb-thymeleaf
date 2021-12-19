@@ -20,4 +20,8 @@ public class CartProductService {
     public void delete(CartProduct cartProduct) {
         cartProductDao.customDelete(cartProduct.getId());
     }
+
+    public CartProduct findById(Long id){
+        return cartProductDao.findById(id).get();
+    }
 }
