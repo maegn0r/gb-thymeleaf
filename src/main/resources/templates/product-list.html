@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Список продуктов</title>
@@ -23,8 +23,9 @@
                 <th scope="col">Название</th>
                 <th scope="col">Цена</th>
                 <th scope="col">Доступно</th>
-                <th scope="col">Редактировать</th>
-                <th scope="col">Удалить</th>
+                <th scope="col" sec:authorize="hasAuthority('USER') || isAnonymous()">Добавить в корзину</th>
+                <th scope="col" sec:authorize="hasAuthority('ADMIN')">Редактировать</th>
+                <th scope="col" sec:authorize="hasAuthority('ADMIN')">Удалить</th>
             </tr>
             </thead>
             <tbody>
@@ -35,12 +36,13 @@
                 <td th:text="${product.cost}"></td>
                 <td th:text="${product.count}"></td>
                 <td>
+                    <a type="button" class="btn btn-warning" sec:authorize="hasAuthority('USER')" th:if="${product.status.name() == 'ACTIVE'}" th:href="@{/cart/addToCart(productId=${product.id})}">В корзину</a>
+                    <a type="button" class="btn btn-warning" sec:authorize="isAnonymous()" th:if="${product.status.name() == 'ACTIVE'}" th:href="@{/auth-confirm}">В корзину</a>
+                </td>
+                <td sec:authorize="hasAuthority('ADMIN')">
                     <a type="button" class="btn btn-warning" th:href="@{/product(id=${product.id})}">Редактировать</a>
                 </td>
-                <td>
-                    <a type="button" class="btn btn-warning" th:if="${product.status.name() == 'ACTIVE'}" th:href="@{/cart/addToCart(productId=${product.id})}">В корзину</a>
-                </td>
-                <td>
+                <td sec:authorize="hasAuthority('ADMIN')">
                     <a type="button" class="btn btn-danger" th:href="@{/product/delete(id=${product.id})}">Удалить</a>
                 </td>
             </tr>
