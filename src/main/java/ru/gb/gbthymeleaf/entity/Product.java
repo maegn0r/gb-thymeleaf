@@ -31,6 +31,8 @@ public class Product {
     private BigDecimal cost;
     @Column(name = "manufacture_date")
     private LocalDate manufactureDate;
+    @Column(name = "count")
+    private Long count;
 
     @Version
     @Column(name = "VERSION")

@@ -11,6 +11,8 @@ import ru.gb.gbthymeleaf.entity.Product;
 import ru.gb.gbthymeleaf.service.ProductService;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,7 +23,9 @@ public class ProductController {
 
     @GetMapping("/all")
     public String getProductList(Model model) {
-        model.addAttribute("products", productService.findAll());
+        List<Product> list = productService.findAll();
+        list.sort(Comparator.comparing(Product::getId));
+        model.addAttribute("products", list);
         return "product-list";
     }
 
